@@ -1,0 +1,22 @@
+services:
+  mysql-db:
+    image: mysql:8.0
+    container_name: banco_db
+
+    environment:
+      
+      MYSQL_DATABASE: banco_db
+
+      MYSQL_ROOT_PASSWORD: root
+      
+      MYSQL_USER: alura
+      MYSQL_PASSWORD: alura
+    ports:
+      
+      - "3306:3306"
+    volumes:
+      
+      - mysql_data:/var/lib/mysql
+
+volumes:
+  mysql_data:
