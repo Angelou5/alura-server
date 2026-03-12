@@ -8,7 +8,7 @@ import com.banco.alura.modules.cliente.application.ports.output.ClienteOutputPor
 import com.banco.alura.modules.cliente.domain.service.ClienteService;
 
 @Configuration
-public class BeanConfiguration {
+public class ClienteBeanConfiguration {
 
     @Bean
     public ClienteService clienteService(ClienteOutputPort clienteOutputPort) {

@@ -7,7 +7,7 @@ import com.banco.alura.modules.cuenta.application.ports.output.CuentaOutputPort;
 import com.banco.alura.modules.cuenta.domain.service.CuentaService;
 
 @Configuration
-public class BeanConfiguration {
+public class CuentaBeanConfiguration {
   @Bean
   public CuentaService cuentaService(CuentaOutputPort cuentaOutputPort){
     return new CuentaService(cuentaOutputPort);
