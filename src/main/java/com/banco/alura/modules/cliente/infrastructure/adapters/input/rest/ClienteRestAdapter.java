@@ -1,46 +1,60 @@
+// infrastructure/adapters/input/rest/ClienteRestAdapter.java
 package com.banco.alura.modules.cliente.infrastructure.adapters.input.rest;
 
-import java.util.List;
-
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.banco.alura.modules.cliente.application.ports.input.CrearClienteUseCase;
+import com.banco.alura.modules.cliente.application.service.ClienteService;
 import com.banco.alura.modules.cliente.domain.model.Cliente;
 import com.banco.alura.modules.cliente.infrastructure.adapters.input.rest.data.request.ClienteRequest;
 import com.banco.alura.modules.cliente.infrastructure.adapters.input.rest.data.response.ClienteResponse;
+import com.banco.alura.modules.cliente.infrastructure.adapters.output.persistence.mapper.ClienteMapper;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/clientes")
+@RequestMapping("/api/v1/clientes")
+@RequiredArgsConstructor
 public class ClienteRestAdapter {
 
-    private final CrearClienteUseCase crearClienteUseCase;
+    private final ClienteService clienteService;
+    private final ClienteMapper clienteMapper;
 
-    public ClienteRestAdapter(CrearClienteUseCase crearClienteUseCase) {
-        this.crearClienteUseCase = crearClienteUseCase;
+    @PostMapping
+    public ResponseEntity<ClienteResponse> crear(@Valid @RequestBody ClienteRequest request) {
+        Cliente cliente = clienteMapper.toDomain(request);
+        Cliente clienteCreado = clienteService.crearCliente(cliente);
+        return new ResponseEntity<>(clienteMapper.toResponse(clienteCreado), HttpStatus.CREATED);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ClienteResponse> obtenerPorId(@PathVariable UUID id) {
+        Cliente cliente = clienteService.obtenerPorId(id);
+        return ResponseEntity.ok(clienteMapper.toResponse(cliente));
     }
 
     @GetMapping
-    public List<ClienteResponse> obtenerClientes() {
-        // Este método es solo un ejemplo, no implementa la lógica real
-        return List.of(
-            new ClienteResponse(1L, "Juan Pérez"),
-            new ClienteResponse(2L, "María Gómez")
-        );
+    public ResponseEntity<List<ClienteResponse>> listarTodos() {
+        List<ClienteResponse> respuestas = clienteService.listarTodos().stream()
+                .map(clienteMapper::toResponse)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(respuestas);
     }
 
-    @PostMapping
-    public ClienteResponse crearCliente(@RequestBody ClienteRequest request) {
-        // 1. Convertimos el Request (JSON) al Modelo de Dominio puro
-        Cliente clientePuro = new Cliente(null, request.nombre());
-        
-        // 2. Ejecutamos el caso de uso
-        Cliente clienteCreado = crearClienteUseCase.crear(clientePuro);
-        
-        // 3. Devolvemos la Respuesta
-        return new ClienteResponse(clienteCreado.getId(), clienteCreado.getNombre());
+    @PutMapping("/{id}")
+    public ResponseEntity<ClienteResponse> actualizar(@PathVariable UUID id, @Valid @RequestBody ClienteRequest request) {
+        Cliente clienteModificado = clienteMapper.toDomain(request);
+        Cliente actualizado = clienteService.actualizarCliente(id, clienteModificado);
+        return ResponseEntity.ok(clienteMapper.toResponse(actualizado));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> eliminar(@PathVariable UUID id) {
+        clienteService.eliminarCliente(id);
+        return ResponseEntity.noContent().build();
     }
 }

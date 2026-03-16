@@ -1,22 +1,20 @@
 // infrastructure/adapters/output/persistence/mapper/ClienteMapper.java
 package com.banco.alura.modules.cliente.infrastructure.adapters.output.persistence.mapper;
 
-import org.springframework.stereotype.Component;
-
 import com.banco.alura.modules.cliente.domain.model.Cliente;
+import com.banco.alura.modules.cliente.infrastructure.adapters.input.rest.data.request.ClienteRequest;
+import com.banco.alura.modules.cliente.infrastructure.adapters.input.rest.data.response.ClienteResponse;
 import com.banco.alura.modules.cliente.infrastructure.adapters.output.persistence.entity.ClienteEntity;
+import org.mapstruct.Mapper;
 
-@Component
-public class ClienteMapper {
-    
-    public ClienteEntity toEntity(Cliente cliente) {
-        ClienteEntity entity = new ClienteEntity();
-        entity.setNombre(cliente.getNombre());
-      
-        return entity;
-    }
+// Usamos "spring" directamente como texto. Esto evita errores de compatibilidad de versiones.
+@Mapper(componentModel = "spring")
+public interface ClienteMapper {
+    // Dominio <-> BD
+    ClienteEntity toEntity(Cliente cliente);
+    Cliente toDomain(ClienteEntity entity);
 
-    public Cliente toDomain(ClienteEntity entity) {
-        return new Cliente(entity.getId(), entity.getNombre());
-    }
+    // DTO <-> Dominio
+    Cliente toDomain(ClienteRequest request);
+    ClienteResponse toResponse(Cliente cliente);
 }

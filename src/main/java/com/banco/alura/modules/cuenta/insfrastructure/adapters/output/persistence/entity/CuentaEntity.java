@@ -3,7 +3,7 @@ package com.banco.alura.modules.cuenta.insfrastructure.adapters.output.persisten
 import java.math.BigDecimal;
 import java.sql.Time;
 
-import com.banco.alura.enums.Estados;
+import com.banco.alura.enums.EstadoCliente;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -19,7 +19,7 @@ public class CuentaEntity {
   private String numero_cuenta;
   private BigDecimal saldo;
  
-  private Estados estado;
+  private EstadoCliente estado;
   
   private Time created_at;
 
@@ -38,8 +38,8 @@ public class CuentaEntity {
   public BigDecimal getSaldo() { return saldo; }
   public void setSaldo(BigDecimal saldo) { this.saldo = saldo; }
 
-  public Estados getEstado() { return estado; }
-  public void setEstado(Estados estado) { this.estado = estado; }
+  public EstadoCliente getEstado() { return estado; }
+  public void setEstado(EstadoCliente estado) { this.estado = estado; }
 
   public Time getCreated_at() { return created_at; }
   public void setCreated_at(Time created_at) { this.created_at = created_at; }
